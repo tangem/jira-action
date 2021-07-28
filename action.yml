@@ -1,0 +1,42 @@
+name: "jira-set-version-action"
+
+description: "Action to set the version in a set of issues"
+
+inputs:
+  github-token:
+    required: true
+    description: "GitHub Token"
+  github-user:
+    required: false
+    description: "GitHub User"
+  github-email:
+    required: true
+    description: "GitHub Email"
+  jira-token:
+    required: true
+    description: "Jira Token"
+  jira-domain:
+    required: true
+    description: "Jira Domain"
+  jira-user:
+    required: true
+    description: "Jira User"
+  project-name:
+    required: true
+    description: "Alias of Project"
+  release-version:
+    required: true
+    description: "Version of release"
+  release-file-path:
+    required: false
+    description: "Version file path"
+  release-file-prefix:
+    required: false
+    description: "Prefix for file"
+  issues:
+    required: false
+    description: "Set of issues"
+
+runs:
+  using: "node12"
+  main: "index.js"

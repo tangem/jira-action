@@ -1,0 +1,36 @@
+{
+  "name": "jira-action",
+  "version": "1.0.0",
+  "description": "Action to set the version in a set of issues",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tangem/jira-action.git"
+  },
+  "scripts": {
+    "lint": "eslint --fix"
+  },
+  "keywords": [
+    "actions",
+    "jira",
+    "tangem"
+  ],
+  "author": "Pavel Sidorov",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tangem/jira-action/issues"
+  },
+  "homepage": "https://github.com/tangem/jira-action#readme",
+  "dependencies": {
+    "@actions/core": "^1.4.0",
+    "@actions/github": "^5.0.0",
+    "moment": "^2.29.1",
+    "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.31.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.23.4"
+  }
+}
