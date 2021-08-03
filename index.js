@@ -3,7 +3,7 @@ const Jira = require('./jira');
 const githubApi = require('./github');
 
 async function run() {
-  { getInput, setFailed } = core;
+  const { getInput, setFailed } = core;
   try {
     const githubToken = getInput('github-token', { required: true });
     const githubEmail = getInput('github-email', { required: true });
