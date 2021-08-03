@@ -1,5 +1,6 @@
-const { context, getOctokit } = require('@actions/github');
+const github = require('@actions/github');
 
+const { context, getOctokit } = github;
 const githubApi = (githubToken, githubEmail, githubUser) => {
   const { repo: { owner, repo }, issue: { number: pullNumber } } = context;
 
