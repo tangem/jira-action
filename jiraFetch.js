@@ -35,6 +35,7 @@ class JiraFetch {
         },
         body,
       });
+    console.log(isUpdate ? res : res.json());
     return isUpdate ? res : res.json();
   };
 }
