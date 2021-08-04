@@ -2,7 +2,7 @@ const github = require('@actions/github');
 
 const { context, getOctokit } = github;
 const githubApi = (githubToken, githubEmail, githubUser) => {
-  const { repo: { owner, repo }, issue: { number: pullNumber } } = context;
+  const { repo: { owner, repo }, issue: { number: pullNumber }, sha } = context;
 
   const { rest } = getOctokit(githubToken);
 
@@ -56,6 +56,7 @@ const githubApi = (githubToken, githubEmail, githubUser) => {
           name: githubUser || owner,
           email: githubEmail,
         },
+        sha,
       }),
   };
 };

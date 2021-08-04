@@ -9,7 +9,7 @@
   },
   "scripts": {
     "lint": "eslint --fix",
-    "build": "ncc build index.js"
+    "build": "ncc build index.js --minify"
   },
   "keywords": [
     "actions",

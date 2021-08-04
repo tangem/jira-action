@@ -4,7 +4,6 @@ const githubApi = require('./github');
 
 async function run() {
   try {
-    console.log('start');
     const { getInput, setFailed } = core;
     const githubToken = getInput('github-token', { required: true });
     const githubEmail = getInput('github-email', { required: true });
@@ -17,23 +16,21 @@ async function run() {
     const releaseFilePath = getInput('release-file-path', { required: false, default: '' });
     const releaseFilePrefix = getInput('release-file-prefix', { required: false, default: 'Changelog_' });
     const defaultIssues = getInput('issues', { required: false });
-    console.log('init values');
+
     const github = githubApi(githubToken, githubEmail, githubUser);
-    console.log('init gh');
     const jira = new Jira(domain, user, token, projectName);
-    console.log('init jira');
+
     const issues = defaultIssues ? JSON.parse(defaultIssues) : await github.getIssues();
-    console.log(issues);
     const jiraIssues = await jira.getIssues(issues);
-    console.log(jiraIssues);
+
     const commentText = jiraIssues
       .map(({
         issueType, key, url, summary,
       }) => `<${issueType}>${key}(${url}) ${summary}`)
-      .join('\r\n');
+      .join('\r\n\r\n');
 
     const path = `${releaseFilePath}/${releaseFilePrefix}${releaseVersion}.md`;
-    console.log(path);
+
     await Promise.all([
       github.createComment(commentText),
       github.createOrUpdateFileContents(path, releaseVersion, commentText),
