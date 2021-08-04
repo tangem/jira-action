@@ -37,7 +37,6 @@ class Jira {
       const projectId = await this.#api.getProjectId(this.#projectName);
       version = await this.#api.createVersion(projectId, versionName);
     }
-    console.log(version);
     return Promise.all([
       ...issues.map(async (item) => this.#api.issueSetVersion(item, version)),
     ]);

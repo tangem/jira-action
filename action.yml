@@ -2,6 +2,10 @@ name: "jira-set-version-action"
 
 description: "Action to set the version in a set of issues"
 
+branding:
+  icon: git-pull-request
+  color: green
+
 inputs:
   github-token:
     required: true
