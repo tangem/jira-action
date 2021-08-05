@@ -2,7 +2,7 @@ const github = require('@actions/github');
 
 const { context, getOctokit } = github;
 const githubApi = (githubToken, githubEmail, githubUser) => {
-  const { repo: { owner, repo }, issue: { number: pullNumber }, sha } = context;
+  const { repo: { owner, repo }, issue: { number: pullNumber } } = context;
 
   const { rest } = getOctokit(githubToken);
 
@@ -42,22 +42,37 @@ const githubApi = (githubToken, githubEmail, githubUser) => {
     }),
 
     createOrUpdateFileContents:
-      async (path, releaseVersion, content) => rest.repos.createOrUpdateFileContents({
-        owner,
-        repo,
-        path,
-        message: `feat: Added Version ${releaseVersion}.md`,
-        content: Buffer.from(content).toString('base64'),
-        committer: {
-          name: githubUser || owner,
-          email: githubEmail,
-        },
-        author: {
-          name: githubUser || owner,
-          email: githubEmail,
-        },
-        sha,
-      }),
+      async (path, releaseVersion, content) => {
+        let sha = undefined;
+        try {
+          const {data} = await rest.repos.getContent({
+            owner,
+            repo,
+            path,
+            ref: 'main',
+          });
+          sha = data.sha;
+        } catch {
+          //
+        }
+
+        return rest.repos.createOrUpdateFileContents({
+          owner,
+          repo,
+          path,
+          message: `feat: Added Version ${releaseVersion}.md`,
+          content: Buffer.from(content).toString('base64'),
+          committer: {
+            name: githubUser || owner,
+            email: githubEmail,
+          },
+          author: {
+            name: githubUser || owner,
+            email: githubEmail,
+          },
+          sha,
+        })
+      },
   };
 };
 
