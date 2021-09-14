@@ -1,8 +1,8 @@
 const github = require('@actions/github');
 
 const { context, getOctokit } = github;
-const githubApi = (githubToken, githubEmail, githubUser) => {
-  const { repo: { owner, repo }, issue: { number: pullNumber } } = context;
+const githubApi = (githubToken, githubEmail, githubUser, pullNumber) => {
+  const { repo: { owner, repo } } = context;
 
   const { rest } = getOctokit(githubToken);
 
@@ -43,9 +43,9 @@ const githubApi = (githubToken, githubEmail, githubUser) => {
 
     createOrUpdateFileContents:
       async (path, releaseVersion, content) => {
-        let sha = undefined;
+        let sha;
         try {
-          const {data} = await rest.repos.getContent({
+          const { data } = await rest.repos.getContent({
             owner,
             repo,
             path,
@@ -71,7 +71,7 @@ const githubApi = (githubToken, githubEmail, githubUser) => {
             email: githubEmail,
           },
           sha,
-        })
+        });
       },
   };
 };

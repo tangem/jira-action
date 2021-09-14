@@ -25,6 +25,9 @@ inputs:
   jira-user:
     required: true
     description: "Jira User"
+  pull-number:
+    required: true
+    description: "Number of pull request"
   project-name:
     required: true
     description: "Alias of Project"

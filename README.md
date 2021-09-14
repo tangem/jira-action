@@ -36,5 +36,6 @@
 | `jira-domain`        | _required_ | | The domain of Jira |
 | `project-name`       | _required_ | | Alias of the project in the Jira |
 | `release-version`    | _required_ | | Name of version |
+| `pull-number`        | _required_ | | Number of pull request |
 | `release-file-path`  | _optional_ | | The path to file with version changing |
 | `release-file-prefix`| _optional_ | `Changelog_` | The prefix of file with version changing |

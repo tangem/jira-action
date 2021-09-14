@@ -4,10 +4,11 @@ const githubApi = require('./github');
 
 async function run() {
   try {
-    const { getInput, setFailed } = core;
+    const { getInput } = core;
     const githubToken = getInput('github-token', { required: true });
     const githubEmail = getInput('github-email', { required: true });
     const githubUser = getInput('github-user', { required: false });
+    const pullNumber = getInput('pull-number', { required: true });
     const domain = getInput('jira-domain', { required: true });
     const user = getInput('jira-user', { required: true });
     const token = getInput('jira-token', { required: true });
@@ -17,7 +18,7 @@ async function run() {
     const releaseFilePrefix = getInput('release-file-prefix', { required: false, default: 'Changelog_' });
     const defaultIssues = getInput('issues', { required: false });
 
-    const github = githubApi(githubToken, githubEmail, githubUser);
+    const github = githubApi(githubToken, githubEmail, githubUser, pullNumber);
     const jira = new Jira(domain, user, token, projectName);
 
     const issues = defaultIssues ? JSON.parse(defaultIssues) : await github.getIssues();
