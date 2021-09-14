@@ -19,6 +19,7 @@
       jira-domain: 'tangem'        
       project-name: 'MM'
       release-version: '1.0.0'
+      pull-number: 1
       release-file-path: 'releases'
       release-file-prefix: 'version_'    
 
