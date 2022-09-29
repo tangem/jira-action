@@ -1,44 +1,58 @@
 const core = require('@actions/core');
+
+const CHECK_VERSION_ACTION = 'checkVersion';
+const CREATE_VERSION_ACTION = 'createVersion';
+const SET_VERSION_TO_ISSUES = 'setVersionToIssues';
+const RENAME_VERSION_ACTION = 'renameVersion';
+const GET_BRANCH_SUMMARY_ACTION = 'getBranchSummary';
+
 const Jira = require('./jira');
-const githubApi = require('./github');
 
-async function run() {
+async function run () {
+  const { getInput, setFailed, setOutput } = core;
+
   try {
-    const { getInput } = core;
-    const githubToken = getInput('github-token', { required: true });
-    const githubEmail = getInput('github-email', { required: true });
-    const githubUser = getInput('github-user', { required: false });
-    const pullNumber = getInput('pull-number', { required: true });
-    const domain = getInput('jira-domain', { required: true });
-    const user = getInput('jira-user', { required: true });
-    const token = getInput('jira-token', { required: true });
-    const projectName = getInput('project-name', { required: true });
-    const releaseVersion = getInput('release-version', { required: true });
-    const releaseFilePath = getInput('release-file-path', { required: false, default: '' });
-    const releaseFilePrefix = getInput('release-file-prefix', { required: false, default: 'Changelog_' });
-    const defaultIssues = getInput('issues', { required: false });
+    const action = getInput('action', { required: true }).trim();
 
-    const github = githubApi(githubToken, githubEmail, githubUser, pullNumber);
-    const jira = new Jira(domain, user, token, projectName);
+    const project = getInput('project',
+      { required: [CHECK_VERSION_ACTION, CREATE_VERSION_ACTION, RENAME_VERSION_ACTION, SET_VERSION_TO_ISSUES].includes(action) }
+    );
+    const version = getInput('version',
+      { required: [CHECK_VERSION_ACTION, CREATE_VERSION_ACTION, RENAME_VERSION_ACTION, SET_VERSION_TO_ISSUES].includes(action) }
+    );
+    const issues = getInput('issues',
+      { required: [SET_VERSION_TO_ISSUES].includes(action) }
+    );
+    const newName = getInput('new-name',
+      { required: [RENAME_VERSION_ACTION].includes(action) }
+    );
+    const branch = getInput('branch-name',
+      { required: [GET_BRANCH_SUMMARY_ACTION].includes(action) }
+    );
 
-    const issues = defaultIssues ? JSON.parse(defaultIssues) : await github.getIssues();
-    const jiraIssues = await jira.getIssues(issues);
+    const { checkVersion, createVersion, setVersionToIssues, renameVersion, getBranchSummary } = new Jira()
 
-    const commentText = jiraIssues
-      .map(({
-        issueType, key, url, summary,
-      }) => `<${issueType}>${key}(${url}) ${summary}`)
-      .join('\r\n\r\n');
+    const actions = {
+      [CHECK_VERSION_ACTION]: () => checkVersion(project, version),
+      [CREATE_VERSION_ACTION]: () => createVersion(project, version),
+      [RENAME_VERSION_ACTION]: () => renameVersion(project, version, newName),
+      [SET_VERSION_TO_ISSUES]: () => setVersionToIssues(project, version, issues),
+      [GET_BRANCH_SUMMARY_ACTION]: () => getBranchSummary(branch)
+    }
 
-    const path = `${releaseFilePath}/${releaseFilePrefix}${releaseVersion}.md`;
+    if(!actions.hasOwnProperty(action)) {
+      setFailed('You must use valid action');
+      process.exit(1);
+    }
 
-    await Promise.all([
-      github.createComment(commentText),
-      github.createOrUpdateFileContents(path, releaseVersion, commentText),
-      jira.setVersionToIssues(releaseVersion, jiraIssues),
-    ]);
-  } catch (err) {
-    setFailed(err.message);
+    const result = await actions[action]();
+
+    setOutput('result', result);
+
+    process.exit(0);
+  } catch (error) {
+    console.error(error)
+    process.exit(1)
   }
 }
 

@@ -1,41 +1,135 @@
 # `jira-action` GitHub Action
 
 ## Table of Contents
-
 * [Usage](#usage)
-* [Inputs](#inputs)
+* [Check version](#check-version)
+* [Create version](#create-version)
+* [Rename version](#rename-version)
+* [Set Version To Issues](#set-version-to-issues)
+* [Get Branch Summary](#get-branch-summary)
 
 ## Usage
 
-```yaml
-- name: commit-list-action
-  uses: tangem/jira-action@master
-    with:
-      github-token: ${{secrets.TOKEN}}
-      github-email: ${{secrets.JIRA_EMAIL}}
-      github-user: ${{secrets.JIRA_USER}}
-      jira-token: ${{secrets.JIRA_TOKEN}}
-      jira-user: ${{secrets.JIRA_USER}}
-      jira-domain: 'tangem'        
-      project-name: 'MM'
-      release-version: '1.0.0'
-      release-file-path: 'releases'
-      release-file-prefix: 'version_'    
-
+For login to Jira necessary to use 
+```yaml 
+- name: Jira Login
+  uses: atlassian/gajira-login@master
+  env:
+    JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+    JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+    JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
 ```
 
-## Inputs
+The required parameter is `action` which specifies the method to use.
 
-| Name          | Requirement | Default | Description |
-| ------------- | ----------- | ------- | ----------- |
-| `github-token`       | _required_ | | Token for access to GitHub |
-| `github-email`       | _required_ | | Email of GitHub User for creating a commit |
-| `github-user`        | _optional_ | | GitHub User for creating a commit |
-| `jira-token`         | _required_ | | Token for access to Jira |
-| `jira-user`          | _required_ | | The user of Jira |
-| `jira-domain`        | _required_ | | The domain of Jira |
-| `project-name`       | _required_ | | Alias of the project in the Jira |
-| `release-version`    | _required_ | | Name of version |
-| `pull-number`        | _required_ | | Number of pull request |
-| `release-file-path`  | _optional_ | | The path to file with version changing |
-| `release-file-prefix`| _optional_ | `Changelog_` | The prefix of file with version changing |
+## Check Version
+```yaml      
+- name: Jira Check Version
+  uses: tangem/jira-action@master
+  with:
+    action: checkVersion
+    project: MM
+    version: v1
+```
+
+### Inputs
+| Name      | Requirement | Description         |
+|-----------|-------------|---------------------|
+| `project` | _required_  | Code of the project |
+| `version` | _required_  | Name of the version |
+
+
+### Outputs
+| Name     | Type    | Description                             |
+|----------|---------|-----------------------------------------|
+| `result` | boolean | Return true if version exist in project |
+
+## Create Version
+```yaml      
+- name: Jira Create Version
+  uses: tangem/jira-action@master
+  with:
+    action: createVersion
+    project: MM
+    version: v1
+```
+
+### Inputs
+| Name      | Requirement | Description         |
+|-----------|-------------|---------------------|
+| `project` | _required_  | Code of the project |
+| `version` | _required_  | Name of the version |
+
+
+### Outputs
+| Name     | Type    | Description                        |
+|----------|---------|------------------------------------|
+| `result` | boolean | Return true if version was created |
+
+## Rename Version
+```yaml      
+- name: Jira Rename Version
+  uses: tangem/jira-action@master
+  with:
+    action: renameVersion
+    project: MM
+    version: v1
+    new-name: v2
+```
+
+### Inputs
+| Name       | Requirement | Description             |
+|------------|-------------|-------------------------|
+| `project`  | _required_  | Code of the project     |
+| `version`  | _required_  | Old Name of the version |
+| `new-name` | _required_  | New Name of the version |
+
+
+### Outputs
+| Name     | Type    | Description                        |
+|----------|---------|------------------------------------|
+| `result` | boolean | Return true if version was renamed |
+
+## Set Version To Issues
+```yaml      
+- name: Jira Set Version To Issues
+  uses: tangem/jira-action@master
+  with:
+    action: setVersionToIssues
+    project: MM
+    version: v1
+```
+
+### Inputs
+| Name      | Requirement | Description                    |
+|-----------|-------------|--------------------------------|
+| `project` | _required_  | Code of the project            |
+| `version` | _required_  | Name of the version            |
+| `issues`  | _required_  | Stringify array of issues keys |
+
+
+### Outputs
+| Name     | Type    | Description                        |
+|----------|---------|------------------------------------|
+| `result` | boolean | Return true if for all set version |
+
+## Get Branch Summary
+```yaml      
+- name: Jira Create Version
+  uses: tangem/jira-action@master
+  with:
+    action: getBranchSummary
+    project: MM
+    version: v1
+```
+
+### Inputs
+| Name          | Requirement | Description     |
+|---------------|-------------|-----------------|
+| `branch-name` | _required_  | The branch name |
+
+
+### Outputs
+| Name     | Type           | Description                                                                   |
+|----------|----------------|-------------------------------------------------------------------------------|
+| `result` | string/boolean | If a problem has been found, it will return a Summary. Otherwise return false |
