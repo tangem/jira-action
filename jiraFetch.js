@@ -1,41 +1,60 @@
 const fetch = require('node-fetch');
+const YAML = require("yaml");
+const fs = require("fs");
 
 class JiraFetch {
-  #authString;
+  #baseUrl;
+  #headers;
 
-  #url;
-
-  constructor(domain, user, token) {
-    this.#authString = Buffer.from(`${user}:${token}`).toString('base64');
-    this.#url = (command) => `https://${domain}.atlassian.net/rest/api/3/${command}`;
+  constructor() {
+    const configPath = `${process.env.HOME}/jira/config.yml`
+    const { email, token, baseUrl } = YAML.parse(fs.readFileSync(configPath, 'utf8'));
+    const authString = Buffer.from(`${email}:${token}`).toString('base64');
+    this.#baseUrl = baseUrl;
+    this.#headers = { Accept: 'application/json', Authorization: `Basic ${(authString)}` }
   }
 
+  #fetch = (command, opts = {}) =>
+    fetch(`${this.#baseUrl}/rest/api/3/${command}`, { method: 'GET', headers: this.#headers, ...opts })
+
   getRequest = async (command) => {
-    const res = await fetch(
-      this.#url(command),
-      {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          Authorization: `Basic ${(this.#authString)}`,
-        },
-      },
-    );
+    const res = await this.#fetch(command)
+
     return res.json();
   };
 
-  setRequest = async (command, body, isUpdate = false) => {
-    const res = await fetch(this.#url(command),
-      {
-        method: isUpdate ? 'PUT' : 'POST',
-        headers: {
-          Accept: 'application/json',
-          Authorization: `Basic ${this.#authString}`,
-          'Content-Type': 'application/json',
-        },
-        body,
-      });
-    return isUpdate ? res : res.json();
+  postRequest = async (command, body) => {
+    const res = await this.#fetch(command,{
+      method: 'POST',
+      headers: {
+        ...this.#headers,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body)})
+    return res.json();
+  };
+
+  putRequest = async (command, body) => {
+    const res = await this.#fetch(command,{
+      method: 'PUT',
+      headers: {
+        ...this.#headers,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body)});
+    return res.json();
+  };
+
+  putRequestText = async (command, body) => {
+    const res = await this.#fetch(command,{
+      method: 'PUT',
+      headers: {
+        ...this.#headers,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body)});
+
+    return res.text();
   };
 }
 
