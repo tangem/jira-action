@@ -98,6 +98,7 @@ The required parameter is `action` which specifies the method to use.
     action: setVersionToIssues
     project: MM
     version: v1
+    issues: '["AND-1","AND-2"]'
 ```
 
 ### Inputs
@@ -115,12 +116,11 @@ The required parameter is `action` which specifies the method to use.
 
 ## Get Branch Summary
 ```yaml      
-- name: Jira Create Version
+- name: Jira Get Branch Summary
   uses: tangem/jira-action@master
   with:
     action: getBranchSummary
-    project: MM
-    version: v1
+    branch-name: IOS-2148 Call updateIsBackupAllowed
 ```
 
 ### Inputs
