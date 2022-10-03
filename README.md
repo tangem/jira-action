@@ -132,4 +132,4 @@ The required parameter is `action` which specifies the method to use.
 ### Outputs
 | Name     | Type           | Description                                                                   |
 |----------|----------------|-------------------------------------------------------------------------------|
-| `result` | string/boolean | If a problem has been found, it will return a Summary. Otherwise return false |
+| `result` | string/boolean | If a issue has been found, it will return a Summary. Otherwise return false |
