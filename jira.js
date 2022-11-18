@@ -1,13 +1,16 @@
 const JiraApi = require('./jiraApi');
+const { getBranchId } = require('./utils');
 
 class Jira {
   #api;
 
+  #checkResult;
+
   constructor() {
     this.#api = new JiraApi();
+    // eslint-disable-next-line max-len
+    this.#checkResult = ({ errors = {}, errorMessages = [] }) => errorMessages.length === 0 && Object.keys(errors).length === 0;
   }
-
-  #checkResult = ({errors = {} , errorMessages = []}) => errorMessages.length === 0 &&   Object.keys(errors).length === 0
 
   getIssues = async (arr) => {
     const [types, ...issues] = await Promise.all([
@@ -31,12 +34,12 @@ class Jira {
     let issues = [];
 
     try {
-      issues = JSON.parse(issuesString)
+      issues = JSON.parse(issuesString);
     } catch (e) {
       return false;
     }
 
-    if(!Array.isArray(issues) || !issues.length) {
+    if (!Array.isArray(issues) || !issues.length) {
       return false;
     }
 
@@ -49,21 +52,21 @@ class Jira {
       issues.map((issue) => this.#api.issueSetVersion(issue, id)),
     );
 
-    return result.map((item) => this.#checkResult(item)).find((item) => !item) === undefined
+    return result.map((item) => this.#checkResult(item)).find((item) => !item) === undefined;
   };
 
   checkVersion = async (projectName, version) => {
     const result = await this.#api.findProjectVersionByName(projectName, version);
 
     return !!result;
-  }
+  };
 
   createVersion = async (projectName, version) => {
     const projectId = await this.#api.getProjectId(projectName);
     const result = await this.#api.createVersion(projectId, version);
 
     return this.#checkResult(result);
-  }
+  };
 
   renameVersion = async (projectName, oldName, newName) => {
     if (!newName) {
@@ -76,24 +79,21 @@ class Jira {
     const result = await this.#api.renameVersion(version.id, newName);
 
     return this.#checkResult(result);
-  }
+  };
 
   getBranchSummary = async (name) => {
-    const jiraMatcher = /\d+-[A-Z]+(?!-?[a-zA-Z]{1,10})/g;
-    const names = name.split('').reverse().join('').match(jiraMatcher);
-    if (!names) {
+    const id = getBranchId(name);
+    if (!id) {
       return false;
     }
-    const [ firstMatch ] = names;
-    const id = firstMatch.split('').reverse().join('');
 
     try {
-      const {summary, key} = await this.#api.getIssue(id);
-      return `${key} / ${summary}`
+      const { summary, key } = await this.#api.getIssue(id);
+      return `${key} / ${summary}`;
     } catch (e) {
       return false;
     }
-  }
+  };
 }
 
 module.exports = Jira;
