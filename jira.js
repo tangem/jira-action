@@ -89,7 +89,7 @@ class Jira {
 
     try {
       const { summary, key } = await this.#api.getIssue(id);
-      return `${key} / ${summary}`;
+      return { key, summary };
     } catch (e) {
       return false;
     }
