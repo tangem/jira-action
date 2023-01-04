@@ -7,7 +7,6 @@ const RENAME_VERSION_ACTION = 'renameVersion';
 const GET_BRANCH_SUMMARY_ACTION = 'getBranchSummary';
 
 const Jira = require('./jira');
-const { debug } = require('@actions/core');
 
 async function run() {
   const { getInput, setFailed, setOutput } = core;
@@ -56,16 +55,11 @@ async function run() {
     }
 
     const result = await actions[action]();
-
-    debug(`result is ${result}`);
     if (typeof result === 'object') {
-      debug('result is object');
       Object.entries(result).forEach(([key, value]) => {
-        debug(`key: ${key} value:${value}`);
         setOutput(key, value);
       });
     } else {
-      debug(`2result is ${result}`);
       setOutput('result', result);
     }
 
