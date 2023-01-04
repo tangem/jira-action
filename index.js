@@ -58,9 +58,11 @@ async function run() {
 
     if (typeof result === 'object') {
       Object.entries(result).forEach(([key, value]) => {
+        console.log(key, value);
         setOutput(key, value);
       });
     } else {
+      console.log(result);
       setOutput('result', result);
     }
 
