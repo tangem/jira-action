@@ -55,14 +55,11 @@ async function run() {
     }
 
     const result = await actions[action]();
-
     if (typeof result === 'object') {
       Object.entries(result).forEach(([key, value]) => {
-        console.log(key, value);
         setOutput(key, value);
       });
     } else {
-      console.log(result);
       setOutput('result', result);
     }
 
