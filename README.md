@@ -130,27 +130,8 @@ The required parameter is `action` which specifies the method to use.
 
 
 ### Outputs
-| Name     | Type           | Description                                                                 |
-|----------|----------------|-----------------------------------------------------------------------------|
-| `result` | string/boolean | If a issue has been found, it will return a Summary. Otherwise return false |
+| Name      | Type           | Description                                                                 |
+|-----------|----------------|-----------------------------------------------------------------------------|
+| `key`     | string/boolean | If a issue has been found, it will return a key. Otherwise return false     |
+| `summary` | string/boolean | If a issue has been found, it will return a Summary. Otherwise return false |
 
-
-## Get Branch Id
-```yaml      
-- name: Jira Get Branch Id
-  uses: tangem/jira-action@master
-  with:
-    action: getBranchId
-    branch-name: IOS-2148 Call updateIsBackupAllowed
-```
-
-### Inputs
-| Name          | Requirement | Description     |
-|---------------|-------------|-----------------|
-| `branch-name` | _required_  | The branch name |
-
-
-### Outputs
-| Name     | Type           | Description                                                            |
-|----------|----------------|------------------------------------------------------------------------|
-| `result` | string/boolean | If a issue has been found, it will return a Id. Otherwise return false |

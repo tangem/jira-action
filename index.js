@@ -2,13 +2,11 @@ const core = require('@actions/core');
 
 const CHECK_VERSION_ACTION = 'checkVersion';
 const CREATE_VERSION_ACTION = 'createVersion';
-const SET_VERSION_TO_ISSUES = 'setVersionToIssues';
+const SET_VERSION_TO_ISSUES_ACTION = 'setVersionToIssues';
 const RENAME_VERSION_ACTION = 'renameVersion';
 const GET_BRANCH_SUMMARY_ACTION = 'getBranchSummary';
-const GET_BRANCH_ID_ACTION = 'getBranchId';
 
 const Jira = require('./jira');
-const { getBranchId } = require('./utils');
 
 async function run() {
   const { getInput, setFailed, setOutput } = core;
@@ -19,16 +17,16 @@ async function run() {
     const project = getInput(
       'project',
       // eslint-disable-next-line max-len
-      { required: [CHECK_VERSION_ACTION, CREATE_VERSION_ACTION, RENAME_VERSION_ACTION, SET_VERSION_TO_ISSUES].includes(action) },
+      { required: [CHECK_VERSION_ACTION, CREATE_VERSION_ACTION, RENAME_VERSION_ACTION, SET_VERSION_TO_ISSUES_ACTION].includes(action) },
     );
     const version = getInput(
       'version',
       // eslint-disable-next-line max-len
-      { required: [CHECK_VERSION_ACTION, CREATE_VERSION_ACTION, RENAME_VERSION_ACTION, SET_VERSION_TO_ISSUES].includes(action) },
+      { required: [CHECK_VERSION_ACTION, CREATE_VERSION_ACTION, RENAME_VERSION_ACTION, SET_VERSION_TO_ISSUES_ACTION].includes(action) },
     );
     const issues = getInput(
       'issues',
-      { required: [SET_VERSION_TO_ISSUES].includes(action) },
+      { required: [SET_VERSION_TO_ISSUES_ACTION].includes(action) },
     );
     const newName = getInput(
       'new-name',
@@ -47,9 +45,8 @@ async function run() {
       [CHECK_VERSION_ACTION]: () => checkVersion(project, version),
       [CREATE_VERSION_ACTION]: () => createVersion(project, version),
       [RENAME_VERSION_ACTION]: () => renameVersion(project, version, newName),
-      [SET_VERSION_TO_ISSUES]: () => setVersionToIssues(project, version, issues),
+      [SET_VERSION_TO_ISSUES_ACTION]: () => setVersionToIssues(project, version, issues),
       [GET_BRANCH_SUMMARY_ACTION]: () => getBranchSummary(branch),
-      [GET_BRANCH_ID_ACTION]: () => getBranchId(branch),
     };
 
     if (!Object.prototype.hasOwnProperty.call(actions, action)) {
@@ -59,7 +56,13 @@ async function run() {
 
     const result = await actions[action]();
 
-    setOutput('result', result);
+    if (typeof result === 'object') {
+      Object.entries(result).forEach(([key, value]) => {
+        setOutput(key, value);
+      });
+    } else {
+      setOutput('result', result);
+    }
 
     process.exit(0);
   } catch (error) {
