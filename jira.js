@@ -57,15 +57,18 @@ class Jira {
 
   checkVersion = async (projectName, version) => {
     const result = await this.#api.findProjectVersionByName(projectName, version);
-
-    return !!result;
+    const wasFound = (result !== undefined);
+    // eslint-disable-next-line no-console
+    console.log(`Version ${version} in project ${projectName} ${wasFound ? 'was found' : 'was not found'}`);
+    return wasFound;
   };
 
   createVersion = async (projectName, version) => {
     const projectId = await this.#api.getProjectId(projectName);
-    const result = await this.#api.createVersion(projectId, version);
-
-    return this.#checkResult(result);
+    const wasCreated = this.#checkResult(await this.#api.createVersion(projectId, version));
+    // eslint-disable-next-line no-console
+    console.log(`Version ${version} in project ${projectName} ${wasCreated ? 'was created' : 'was not created'}`);
+    return wasCreated;
   };
 
   renameVersion = async (projectName, oldName, newName) => {
