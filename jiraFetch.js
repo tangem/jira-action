@@ -24,19 +24,26 @@ class JiraFetch {
   };
 
   postRequest = async (command, body) => {
-    const res = await this.#fetch(command, {
-      method: 'POST',
-      headers: {
-        ...this.#headers,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-    if (!res.ok) {
-      throw new Error(await res.text());
+    let response;
+
+    try {
+      response = await this.#fetch(command, {
+        method: 'POST',
+        headers: {
+          ...this.#headers,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
+    } catch (error) {
+      throw new Error('There was an error', error);
     }
 
-    return res.json();
+    if (!response?.ok) {
+      throw new Error(`HTTP Response Code: ${response?.status}`);
+    }
+
+    return response.json();
   };
 
   putRequest = async (command, body) => {
