@@ -8,5 +8,13 @@ const getBranchId = (name) => {
   return firstMatch.split('').reverse().join('');
 };
 
+const getParsedIssues = (issuesString) => {
+  try {
+    return JSON.parse(issuesString);
+  } catch (e) {
+    return [];
+  }
+};
+
 // eslint-disable-next-line import/prefer-default-export
-export { getBranchId };
+export { getBranchId, getParsedIssues };

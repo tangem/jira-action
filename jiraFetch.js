@@ -40,7 +40,7 @@ class JiraFetch {
     }
 
     if (!response?.ok) {
-      throw new Error(`HTTP Response Code: ${response?.status}`, JSON.stringify(response));
+      throw new Error(`HTTP Response Code: ${response?.status}`);
     }
 
     return response.json();

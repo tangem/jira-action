@@ -4,9 +4,11 @@
 * [Usage](#usage)
 * [Check version](#check-version)
 * [Create version](#create-version)
+* [Realise version](#realise-version)
 * [Rename version](#rename-version)
 * [Set Version To Issues](#set-version-to-issues)
 * [Get Branch Summary](#get-branch-summary)
+* [Get Issues Summary](#get-issues-summary)
 
 ## Usage
 
@@ -60,6 +62,26 @@ The required parameter is `action` which specifies the method to use.
 | `project` | _required_  | Code of the project |
 | `version` | _required_  | Name of the version |
 
+### Outputs
+| Name     | Type    | Description                        |
+|----------|---------|------------------------------------|
+| `result` | boolean | Return true if version was created |
+
+## Realise Version
+```yaml      
+- name: Jira Realise Version
+  uses: tangem/jira-action@master
+  with:
+    action: realiseVersion
+    project: MM
+    version: v1
+```
+
+### Inputs
+| Name      | Requirement | Description         |
+|-----------|-------------|---------------------|
+| `project` | _required_  | Code of the project |
+| `version` | _required_  | Name of the version |
 
 ### Outputs
 | Name     | Type    | Description                        |
@@ -84,7 +106,6 @@ The required parameter is `action` which specifies the method to use.
 | `version`  | _required_  | Old Name of the version |
 | `new-name` | _required_  | New Name of the version |
 
-
 ### Outputs
 | Name     | Type    | Description                        |
 |----------|---------|------------------------------------|
@@ -108,7 +129,6 @@ The required parameter is `action` which specifies the method to use.
 | `version` | _required_  | Name of the version            |
 | `issues`  | _required_  | Stringify array of issues keys |
 
-
 ### Outputs
 | Name     | Type    | Description                        |
 |----------|---------|------------------------------------|
@@ -128,10 +148,27 @@ The required parameter is `action` which specifies the method to use.
 |---------------|-------------|-----------------|
 | `branch-name` | _required_  | The branch name |
 
-
 ### Outputs
 | Name      | Type           | Description                                                                 |
 |-----------|----------------|-----------------------------------------------------------------------------|
 | `key`     | string/boolean | If a issue has been found, it will return a key. Otherwise return false     |
 | `summary` | string/boolean | If a issue has been found, it will return a Summary. Otherwise return false |
 
+## Get Issues Summary
+```yaml      
+- name: Jira Get Issues Summary
+  uses: tangem/jira-action@master
+  with:
+    action: getIssuesSummary
+    issues: '["AND-1","AND-2"]'
+```
+
+### Inputs
+| Name     | Requirement | Description                    |
+|----------|-------------|--------------------------------|
+| `issues` | _required_  | Stringify array of issues keys |
+
+### Outputs
+| Name     | Type           | Description                                                                  |
+|----------|----------------|------------------------------------------------------------------------------|
+| `result` | string/boolean | If a issues has been found, it will return a Summary. Otherwise return false |
