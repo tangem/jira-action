@@ -1,5 +1,8 @@
 const JiraApi = require('./jiraApi');
-const { getBranchId } = require('./utils');
+const {
+  getBranchId,
+  getParsedIssues,
+} = require('./utils');
 
 class Jira {
   #api;
@@ -31,13 +34,7 @@ class Jira {
   };
 
   setVersionToIssues = async (projectName, versionName, issuesString) => {
-    let issues = [];
-
-    try {
-      issues = JSON.parse(issuesString);
-    } catch (e) {
-      return false;
-    }
+    const issues = getParsedIssues(issuesString);
 
     if (!Array.isArray(issues) || !issues.length) {
       return false;
@@ -96,6 +93,34 @@ class Jira {
     } catch (e) {
       return false;
     }
+  };
+
+  realiseVersion = async (projectName, versionName) => {
+    const version = await this.#api.findProjectVersionByName(projectName, versionName);
+    if (!version) {
+      return false;
+    }
+    const result = await this.#api.realiseVersion(version.id);
+
+    return this.#checkResult(result);
+  };
+
+  getIssuesSummary = async (issuesString) => {
+    const issues = getParsedIssues(issuesString);
+
+    if (!Array.isArray(issues) || !issues.length) {
+      return false;
+    }
+
+    return (await Promise.all(
+      issues.map(async (id) => {
+        const {
+          summary,
+          key,
+        } = await this.#api.getIssue(id);
+        return `${key} / ${summary}`;
+      }),
+    )).join('\n');
   };
 }
 

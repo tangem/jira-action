@@ -36,15 +36,16 @@ class JiraApi {
   findProjectVersionByName = (projectName, version) => this.#jiraFetch.getRequest(`project/${projectName}/versions`)
     .then((response) => response.find((item) => item.name === version));
 
-  createVersion = (projectId, version) => this.#jiraFetch.postRequest(
-    'version',
-    {
-      archived: false, releaseDate: moment().format('YYYY-MM-DD'), name: version, projectId, released: true,
-    },
-  );
+  createVersion = (projectId, version) => this.#jiraFetch.postRequest('version', {
+    archived: false, name: version, projectId, released: false,
+  });
 
   issueSetVersion = (key, id) => this.#jiraFetch.putRequestText(`issue/${key}`, { update: { fixVersions: [{ set: [{ id }] }] } });
 
   renameVersion = (versionId, name) => this.#jiraFetch.putRequest(`version/${versionId}`, { name });
+
+  realiseVersion = (versionId) => this.#jiraFetch.putRequest(`version/${versionId}`, {
+    releaseDate: moment().format('YYYY-MM-DD'), released: false,
+  });
 }
 module.exports = JiraApi;
