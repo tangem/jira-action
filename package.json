@@ -1,6 +1,6 @@
 {
   "name": "jira-action",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Action for work with Jira",
   "main": "index.js",
   "scripts": {
