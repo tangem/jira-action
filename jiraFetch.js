@@ -67,7 +67,9 @@ class JiraFetch {
       },
       body: JSON.stringify(body),
     });
-
+    console.log(res.ok());
+    console.log(JSON.stringify(res.json()));
+    console.log(res.text());
     return res.text();
   };
 }
