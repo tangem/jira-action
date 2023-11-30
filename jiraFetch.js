@@ -67,7 +67,6 @@ class JiraFetch {
       },
       body: JSON.stringify(body),
     });
-
     return res.text();
   };
 }
