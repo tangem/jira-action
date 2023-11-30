@@ -40,7 +40,7 @@ class JiraApi {
     archived: false, name: version, projectId, released: false,
   });
 
-  issueSetVersion = (key, id) => this.#jiraFetch.putRequestText(`issue/${key}`, { update: { fixVersions: [{ edit: [{ id }] }] } });
+  issueSetVersion = (key, id) => this.#jiraFetch.putRequestText(`issue/${key}`, { update: { fixVersions: [{ set: { id } }] } });
 
   renameVersion = (versionId, name) => this.#jiraFetch.putRequest(`version/${versionId}`, { name });
 
